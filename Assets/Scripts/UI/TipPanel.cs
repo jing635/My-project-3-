@@ -1,6 +1,3 @@
-using JetBrains.Annotations;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,28 +7,16 @@ public class TipPanel : BasePanel
     public Button btnsure;
     public TextMeshProUGUI tip;
 
-
-
     public override void Init()
     {
-        btnsure.onClick.AddListener(() =>
+        btnsure.onClick.AddListener(delegate
         {
-            //隐藏面板
+            UIManager.Instance.HidePanel<TipPanel>();
         });
-
-
     }
 
-    public override void ShowMe()
-    {
-        base.ShowMe();
-        
-    }
-
-    public void Changeinfo(string info)
+    public void Show(string info)
     {
         tip.text = info;
     }
-
-    
 }

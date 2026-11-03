@@ -61,14 +61,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\UI\TipPanel.cs" />
-    <Compile Include="Assets\Scripts\Data\BaseData.cs" />
+    <Compile Include="Assets\Scripts\GameData.cs" />
+    <Compile Include="Assets\Scripts\Protocol\Frame.cs" />
     <Compile Include="Assets\Scripts\UI\BasePanel.cs" />
+    <Compile Include="Assets\Scripts\GameRoot.cs" />
     <Compile Include="Assets\Scripts\UI\LoginPanel.cs" />
-    <Compile Include="Assets\Scripts\Msg\BaseMsg.cs" />
     <Compile Include="Assets\Scripts\mgr\UIManager.cs" />
     <Compile Include="Assets\Scripts\UI\RegisterPanel.cs" />
-    <Compile Include="Assets\Scripts\Msg\LoginMsg1.cs" />
+    <Compile Include="Assets\Scripts\Protocol\Msg.cs" />
     <Compile Include="Assets\Scripts\mgr\NetMgr.cs" />
+    <Compile Include="Assets\Scripts\Protocol\Bytes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

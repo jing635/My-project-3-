@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,57 +9,60 @@ public class LoginPanel : BasePanel
     public Button btnLogin;
     public Button btnRegister;
 
-
     public override void Init()
     {
-        btnRegister.onClick.AddListener(() =>
-        {
-            //换到注册面板
-            UIManager.Instance.HidePanel<LoginPanel>();
-            UIManager.Instance.ShowPanel<RegisterPanel>();
-        });
+        btnLogin.onClick.AddListener(OnClickLogin);
+        btnRegister.onClick.AddListener(OnClickRegister);
 
-        btnLogin.onClick.AddListener(() =>
-        {
-            if (UserName.text < 7)
-            {
-                TipPanel panel = UIManager.Instance.ShowPanel<TipPanel>();
-                panel.Changeinfo("用户名必须大于6位数");
-            }
-            else
-            {
-                //传消息到服务端 验证用户是否存在以及密码是否正确
-                if(IsExistUser(UserName.text))
-                {
-                    //验证密码是否正确
-                    if(IsRightPw(PassWord.text))
-                    {
-                        //进入游戏大厅,
-                    }
-                    else
-                    {
-                        TipPanel panel = UIManager.Instance.ShowPanel<TipPanel>();
-                        panel.Changeinfo("密码错误");
-                    }
-                }
-                else
-                {
-                    TipPanel panel = UIManager.Instance.ShowPanel<TipPanel>();
-                    panel.Changeinfo("用户名不存在");
-                }
-            }
-            
-        });
+        // 告诉 NetMgr：收到"登录结果"就调 OnLoginRes
+        NetMgr.Instance.On<LoginRes>(OnLoginRes);
     }
-    
-    private bool IsExistUser(string username)
+
+    private void OnClickLogin()
     {
-        
+        string user = UserName.text.Trim();
+        string pwd = PassWord.text;
+
+        if (user.Length < 6) { Tip("用户名至少 6 位"); return; }
+        if (pwd.Length == 0) { Tip("请输入密码"); return; }
+        if (!NetMgr.Instance.IsConnected) { Tip("还没连上服务器"); return; }
+
+        btnLogin.interactable = false;      // 等结果期间不能重复点
+        Tip("正在登录...");
+
+        // 只负责发，不在这里判断对错
+        NetMgr.Instance.Send(new LoginReq { username = user, password = pwd });
     }
 
-    private bool IsRightPw(string password)
+    // 服务器回消息时自动调到这里
+    private void OnLoginRes(LoginRes res)
     {
+        btnLogin.interactable = true;
 
+        if (res.code == Code.Ok)
+        {
+            GameData.UserId = res.userId;
+            GameData.UserName = UserName.text.Trim();
+            Tip("登录成功！");
+
+            // 阶段二接上大厅：
+            // UIManager.Instance.HidePanel<LoginPanel>();
+            // UIManager.Instance.ShowPanel<LobbyPanel>();
+        }
+        else
+        {
+            Tip(res.message);       // 服务端说啥就显示啥
+        }
     }
-    
+
+    private void OnClickRegister()
+    {
+        UIManager.Instance.HidePanel<LoginPanel>();
+        UIManager.Instance.ShowPanel<RegisterPanel>();
+    }
+
+    private void Tip(string info)
+    {
+        UIManager.Instance.ShowPanel<TipPanel>().Show(info);
+    }
 }
