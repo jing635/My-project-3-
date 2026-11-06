@@ -3,6 +3,10 @@ public static class GameData
 {
     public static int UserId;
     public static string UserName = "";
+    public static bool IsPlayMusic = true;
+    public static bool IsPlaySound = true;
+    public static float Music;
+    public static float Sound;
 
     public static bool IsLogin
     {

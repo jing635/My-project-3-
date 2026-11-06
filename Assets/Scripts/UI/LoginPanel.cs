@@ -43,11 +43,11 @@ public class LoginPanel : BasePanel
         {
             GameData.UserId = res.userId;
             GameData.UserName = UserName.text.Trim();
-            Tip("登录成功！");
 
-            // 阶段二接上大厅：
-            // UIManager.Instance.HidePanel<LoginPanel>();
-            // UIManager.Instance.ShowPanel<LobbyPanel>();
+
+            
+            UIManager.Instance.HidePanel<LoginPanel>();
+            UIManager.Instance.ShowPanel<GameLobbyPanel>();
         }
         else
         {

@@ -61,15 +61,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\UI\TipPanel.cs" />
+    <Compile Include="Assets\Scripts\NetMgr.cs" />
     <Compile Include="Assets\Scripts\GameData.cs" />
+    <Compile Include="Assets\Scripts\UI\GameLobbyPanel.cs" />
     <Compile Include="Assets\Scripts\Protocol\Frame.cs" />
     <Compile Include="Assets\Scripts\UI\BasePanel.cs" />
     <Compile Include="Assets\Scripts\GameRoot.cs" />
+    <Compile Include="Assets\Scripts\UI\SettingPanel.cs" />
     <Compile Include="Assets\Scripts\UI\LoginPanel.cs" />
-    <Compile Include="Assets\Scripts\mgr\UIManager.cs" />
+    <Compile Include="Assets\Scripts\Music\AudioInfo.cs" />
+    <Compile Include="Assets\Scripts\Music\AudioManager.cs" />
+    <Compile Include="Assets\Scripts\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts\UI\RegisterPanel.cs" />
     <Compile Include="Assets\Scripts\Protocol\Msg.cs" />
-    <Compile Include="Assets\Scripts\mgr\NetMgr.cs" />
     <Compile Include="Assets\Scripts\Protocol\Bytes.cs" />
   </ItemGroup>
   <ItemGroup>
