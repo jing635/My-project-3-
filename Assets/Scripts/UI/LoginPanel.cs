@@ -44,8 +44,9 @@ public class LoginPanel : BasePanel
             GameData.UserId = res.userId;
             GameData.UserName = UserName.text.Trim();
 
+            GameData.ApplySetting(res.isPlayMusic, res.isPlaySound, res.music, res.sound);
+            ApplyAudio();
 
-            
             UIManager.Instance.HidePanel<LoginPanel>();
             UIManager.Instance.ShowPanel<GameLobbyPanel>();
         }
@@ -53,6 +54,12 @@ public class LoginPanel : BasePanel
         {
             Tip(res.message);       // 服务端说啥就显示啥
         }
+    }
+
+    private void ApplyAudio()
+    {
+        AudioManager.Instance.SetMusicVolume(GameData.IsPlayMusic ? GameData.Music : 0f);
+        AudioManager.Instance.SetSoundVolume(GameData.IsPlaySound ? GameData.Sound : 0f);
     }
 
     private void OnClickRegister()

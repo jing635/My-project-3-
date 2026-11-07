@@ -17,6 +17,11 @@ public class GameRoot : MonoBehaviour
         NetMgr.Instance.On<KickNotify>(OnKicked);
 
         NetMgr.Instance.Connect(serverIP, serverPort);
+
+        NetMgr.Instance.On<SaveSettingRes>(res =>
+        {
+            Debug.Log("设置已保存：" + (res.code == Code.Ok ? "成功" : "失败"));
+        });
     }
 
     private void OnKicked(KickNotify msg)

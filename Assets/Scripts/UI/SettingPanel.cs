@@ -17,9 +17,20 @@ public class SettingPanel : BasePanel
 
     public override void Init()
     {
+        tgmusic.isOn = GameData.IsPlayMusic;
+        tgsound.isOn = GameData.IsPlaySound;
+        sdmusic.value = GameData.Music;
+        sdSound.value = GameData.Sound;
+
+        tgmusic.onValueChanged.AddListener(v => { GameData.IsPlayMusic = v; ApplyAudio(); });
+        tgsound.onValueChanged.AddListener(v => { GameData.IsPlaySound = v; ApplyAudio(); });
+        sdmusic.onValueChanged.AddListener(v => { GameData.Music = v; ApplyAudio(); });
+        sdSound.onValueChanged.AddListener(v => { GameData.Sound = v; ApplyAudio(); });
+
         btncancel.onClick.AddListener(() =>
         {
             AudioManager.Instance.PlayMusic("click");
+            Save();
             UIManager.Instance.HidePanel<SettingPanel>();
             UIManager.Instance.ShowPanel<GameLobbyPanel>();
         });
@@ -27,37 +38,31 @@ public class SettingPanel : BasePanel
         btnreturn.onClick.AddListener(() =>
         {
             AudioManager.Instance.PlayMusic("click");
+            Save();
             UIManager.Instance.HidePanel<SettingPanel>();
+            GameData.Clear();
             UIManager.Instance.ShowPanel<LoginPanel>();
         });
 
-        tgmusic.onValueChanged.AddListener((isOn) =>
-        {
-            //设置音乐开关 保存
-        });
-
-        tgsound.onValueChanged.AddListener((isOn) =>
-        {
-            //设置音效开关
-        });
-
-        sdmusic.onValueChanged.AddListener((value) =>
-        {
-            //设置音乐大小
-        });
-
-        sdSound.onValueChanged.AddListener((value) =>
-        {
-            //设置音效大小
-        });
     }
 
-    private void Start()
+    private void ApplyAudio()
     {
-        tgmusic.isOn = GameData.IsPlayMusic;
-        tgsound.isOn = GameData.IsPlaySound;
-        sdmusic.value = GameData.Music;
-        sdSound.value = GameData.Sound;
+        AudioManager.Instance.SetMusicVolume(GameData.IsPlayMusic ? GameData.Music : 0f);
+        AudioManager.Instance.SetSoundVolume(GameData.IsPlaySound ? GameData.Sound : 0f);
+    }
+
+    private void Save()
+    {
+        if (!NetMgr.Instance.IsConnected) return;
+
+        NetMgr.Instance.Send(new SaveSettingReq
+        {
+            isPlayMusic = GameData.IsPlayMusic,
+            isPlaySound = GameData.IsPlaySound,
+            music = GameData.Music,
+            sound = GameData.Sound
+        });
     }
 
 
