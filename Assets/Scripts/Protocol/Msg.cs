@@ -1,4 +1,7 @@
 ﻿// ============ 消息号 ============
+using System.Collections.Generic;
+using UnityEditor.U2D.Animation;
+
 public static class MsgId
 {
     public const int LoginReq = 101;   // 客户端 → 服务端：登录
@@ -62,6 +65,7 @@ public class LoginRes : BaseMsg
     public bool isPlaySound;
     public float music;
     public float sound;
+    public List<CharacterData> characterdatas = new List<CharacterData>();
 
     public override int Id() { return MsgId.LoginRes; }
 
@@ -75,6 +79,7 @@ public class LoginRes : BaseMsg
         w.WriteInt(isPlaySound ? 1 : 0);
         w.WriteFloat(music);
         w.WriteFloat(sound);
+        w.WriteCharacters(characterdatas);
         return w.ToArray();
     }
 
@@ -88,6 +93,7 @@ public class LoginRes : BaseMsg
         isPlaySound = r.ReadInt() == 1;
         music = r.ReadFloat();
         sound = r.ReadFloat();
+        characterdatas = r.ReadCharacters();
     }
 }
 
@@ -208,3 +214,5 @@ public class SaveSettingRes : BaseMsg
         code = new ByteReader(body).ReadInt();
     }
 }
+
+

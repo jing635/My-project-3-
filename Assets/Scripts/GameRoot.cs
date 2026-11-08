@@ -18,6 +18,7 @@ public class GameRoot : MonoBehaviour
 
         NetMgr.Instance.Connect(serverIP, serverPort);
 
+
         NetMgr.Instance.On<SaveSettingRes>(res =>
         {
             Debug.Log("设置已保存：" + (res.code == Code.Ok ? "成功" : "失败"));

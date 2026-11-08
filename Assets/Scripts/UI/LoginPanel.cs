@@ -11,6 +11,7 @@ public class LoginPanel : BasePanel
 
     public override void Init()
     {
+        AudioManager.Instance.PlayMusic("bk1");
         btnLogin.onClick.AddListener(OnClickLogin);
         btnRegister.onClick.AddListener(OnClickRegister);
 
@@ -44,9 +45,11 @@ public class LoginPanel : BasePanel
             GameData.UserId = res.userId;
             GameData.UserName = UserName.text.Trim();
 
-            GameData.ApplySetting(res.isPlayMusic, res.isPlaySound, res.music, res.sound);
+            GameData.ApplySetting(res.isPlayMusic, res.isPlaySound, res.music, res.sound, res.characterdatas);
             ApplyAudio();
 
+            AudioManager.Instance.StopMusic("bk1");
+            AudioManager.Instance.PlayMusic("bk2");
             UIManager.Instance.HidePanel<LoginPanel>();
             UIManager.Instance.ShowPanel<GameLobbyPanel>();
         }
@@ -64,6 +67,7 @@ public class LoginPanel : BasePanel
 
     private void OnClickRegister()
     {
+        AudioManager.Instance.StopMusic("bk1");
         UIManager.Instance.HidePanel<LoginPanel>();
         UIManager.Instance.ShowPanel<RegisterPanel>();
     }

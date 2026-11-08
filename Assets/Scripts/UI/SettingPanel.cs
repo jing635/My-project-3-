@@ -19,13 +19,33 @@ public class SettingPanel : BasePanel
     {
         tgmusic.isOn = GameData.IsPlayMusic;
         tgsound.isOn = GameData.IsPlaySound;
+        sdmusic.interactable = tgmusic.isOn;
+        sdSound.interactable = tgsound.isOn;
         sdmusic.value = GameData.Music;
         sdSound.value = GameData.Sound;
 
-        tgmusic.onValueChanged.AddListener(v => { GameData.IsPlayMusic = v; ApplyAudio(); });
-        tgsound.onValueChanged.AddListener(v => { GameData.IsPlaySound = v; ApplyAudio(); });
-        sdmusic.onValueChanged.AddListener(v => { GameData.Music = v; ApplyAudio(); });
-        sdSound.onValueChanged.AddListener(v => { GameData.Sound = v; ApplyAudio(); });
+        tgmusic.onValueChanged.AddListener((isOn)=>
+        {
+            GameData.IsPlayMusic =isOn;
+            sdmusic.interactable = isOn;
+            ApplyAudio(); 
+        });
+        tgsound.onValueChanged.AddListener((isOn)=>
+        {
+            GameData.IsPlaySound =isOn;
+            sdSound.interactable = isOn;
+            ApplyAudio();
+        });
+        sdmusic.onValueChanged.AddListener((v)=>
+        {
+            GameData.Music =v;
+            ApplyAudio();
+        });
+        sdSound.onValueChanged.AddListener((v)=>
+        {
+            GameData.Sound =v;
+            ApplyAudio();
+        });
 
         btncancel.onClick.AddListener(() =>
         {
@@ -42,6 +62,7 @@ public class SettingPanel : BasePanel
             UIManager.Instance.HidePanel<SettingPanel>();
             GameData.Clear();
             UIManager.Instance.ShowPanel<LoginPanel>();
+            AudioManager.Instance.StopMusic("bk2");
         });
 
     }
