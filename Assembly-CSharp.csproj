@@ -80,6 +80,7 @@
     <Compile Include="Assets\Scripts\UI\RegisterPanel.cs" />
     <Compile Include="Assets\Scripts\Protocol\Msg.cs" />
     <Compile Include="Assets\Scripts\SO\Character.cs" />
+    <Compile Include="Assets\Scripts\UI\ScrollDragRelay.cs" />
     <Compile Include="Assets\Scripts\Protocol\Bytes.cs" />
   </ItemGroup>
   <ItemGroup>

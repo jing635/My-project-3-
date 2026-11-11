@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class CharacterButton : MonoBehaviour
 {
     public Button selfButton;
     public TextMeshProUGUI characterName;
-    private string strSkill1;
-    private string strSkill2;
-    private string strSkill3;
+    private CharacterData data;
 
 
     // Start is called before the first frame update
@@ -21,18 +20,16 @@ public class CharacterButton : MonoBehaviour
             //通知面板改变右侧数据
             CharacterPanel panel = UIManager.Instance.GetPanel<CharacterPanel>();
             if (panel == null) return;
-            panel.UpdatePanel(selfButton.GetComponent<Image>().sprite,characterName.text,strSkill1,strSkill2,strSkill3);
+            panel.SelectCharacter(data);
         });
     }
 
     //更新自己的方法
-    public void InitInfo(CharacterData data)
+    public void InitInfo(CharacterData character)
     {
-        characterName.text = data.CharacterName;
-        selfButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("CharacterSprite/" + data.CharacterImage);
-        strSkill1 = data.Skill1;
-        strSkill2 = data.Skill2;
-        strSkill3 = data.Skill3;
+        data = character;
+        characterName.text = character.CharacterName;
+        selfButton.GetComponent<Image>().sprite =Resources.Load<Sprite>("CharacterSprite/" + character.CharacterImage);
     }
     
 }

@@ -10,6 +10,7 @@ public static class GameData
     public static float Music = 0.7f;
     public static float Sound = 0.7f;
     public static List<CharacterData> CharacterDatas = new List<CharacterData>();
+    public static int SelectedCharacterId = 0;
 
 
     public static void ApplySetting(bool playMusic, bool playSound, float music, float sound, List<CharacterData> datas)
@@ -31,6 +32,7 @@ public static class GameData
         UserId = 0;
         UserName = "";
         CharacterDatas.Clear();
+        SelectedCharacterId = 0;
     }
 
 }

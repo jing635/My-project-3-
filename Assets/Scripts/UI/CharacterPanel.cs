@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-
-public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
+public class CharacterPanel : BasePanel
 {
     public ScrollRect svCharacters;
     public Button btnLeft;
@@ -16,11 +14,17 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
     public Image igCharacter;
     public TextMeshProUGUI textCharacterName;
     public Button btnSkill1;
-    private string strSkill1;
     public Button btnSkill2;
-    private string strSkill2;
     public Button btnSkill3;
-    private string strSkill3;
+
+    // 三个技能文本，点角色时刷新
+    private string strSkill1 = "请先选择一个角色";
+    private string strSkill2 = "请先选择一个角色";
+    private string strSkill3 = "请先选择一个角色";
+
+    // 这次打开期间，右边正在显示谁
+    private CharacterData currentCharacter;
+
     private int currentPageIndex = 0;
     public float snapDuration = 0.3f;
     public Ease snapEase = Ease.OutCubic;
@@ -28,24 +32,18 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
 
     public override void Init()
     {
-        //拿到gamedata里的数据
-        List<CharacterData> characterList = GameData.CharacterDatas;
-
-        StartCoroutine(LoadCharacterCoroutine(characterList));
+        StartCoroutine(LoadCharacterCoroutine(GameData.CharacterDatas));
 
         svCharacters.inertia = false;
 
-        btnLeft.onClick.AddListener(() =>
-        {
-            //换到上一页
-            OnClickPrevPage();
-        });
+        // ScrollRect 会吃掉拖拽事件，挂个中转在它身上
+        ScrollDragRelay relay = svCharacters.gameObject.GetComponent<ScrollDragRelay>();
+        if (relay == null) relay = svCharacters.gameObject.AddComponent<ScrollDragRelay>();
+        relay.OnDragBegin = () => { if (snapTween != null) snapTween.Kill(); };
+        relay.OnDragEnd = SnapToNearestPage;
 
-        btnRight.onClick.AddListener(() =>
-        {
-            //换到下一页
-            OnClickNextPage();
-        });
+        btnLeft.onClick.AddListener(OnClickPrevPage);
+        btnRight.onClick.AddListener(OnClickNextPage);
 
         btnCancel.onClick.AddListener(() =>
         {
@@ -54,27 +52,111 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
             UIManager.Instance.ShowPanel<GameLobbyPanel>();
         });
 
-        btnSkill1.onClick.AddListener(() =>
-        {
-            //显示一技能介绍
-            Tip(strSkill1);
-        });
-
-        btnSkill2.onClick.AddListener(() =>
-        {
-            //显示二技能介绍
-            Tip(strSkill2);
-        });
-
-        btnSkill3.onClick.AddListener(() =>
-        {
-            //显示三技能介绍
-            Tip(strSkill3);
-        });
+        btnSkill1.onClick.AddListener(() => Tip(strSkill1));
+        btnSkill2.onClick.AddListener(() => Tip(strSkill2));
+        btnSkill3.onClick.AddListener(() => Tip(strSkill3));
     }
 
+    // ===== 选中一个角色：这是唯一改"当前角色"的入口 =====
+    public void SelectCharacter(CharacterData data)
+    {
+        if (data == null) return;
 
+        currentCharacter = data;                        // 本次打开期间用
+        GameData.SelectedCharacterId = data.CharacterId; // 记到全局，下次进来用
 
+        Sprite icon = Resources.Load<Sprite>("CharacterSprite/" + data.CharacterImage);
+        UpdatePanel(icon, data.CharacterName, data.Skill1, data.Skill2, data.Skill3);
+    }
+
+    // 刷新右侧显示
+    private void UpdatePanel(Sprite characterSprite, string characterName, string skill1, string skill2, string skill3)
+    {
+        igCharacter.sprite = characterSprite;
+        textCharacterName.text = characterName;
+        strSkill1 = skill1;
+        strSkill2 = skill2;
+        strSkill3 = skill3;
+    }
+
+    // ===== 建格子 =====
+    IEnumerator LoadCharacterCoroutine(List<CharacterData> characterList)
+    {
+        Transform contentTransform = svCharacters.content.transform;
+
+        // 清掉上一次留下的格子（Destroy 是延迟到帧末生效，所以下面要等一下）
+        foreach (Transform child in contentTransform)
+        {
+            Destroy(child.gameObject);
+        }
+        yield return null;
+
+        int totalPages = (characterList.Count + 19) / 20;
+
+        for (int i = 0; i < totalPages; i++)
+        {
+            GameObject page = Instantiate(Resources.Load<GameObject>("UI/Page"));
+            page.transform.SetParent(contentTransform, false);
+
+            for (int j = 0; j < 20; j++)
+            {
+                int index = i * 20 + j;
+                if (index >= characterList.Count) break;
+
+                GameObject btnObj = Instantiate(Resources.Load<GameObject>("UI/CharacterButton"));
+                btnObj.transform.SetParent(page.transform, false);
+
+                CharacterButton btn = btnObj.GetComponent<CharacterButton>();
+                if (btn != null) btn.InitInfo(characterList[index]);
+            }
+
+            Canvas.ForceUpdateCanvases();
+            yield return null;
+        }
+
+        // 所有格子建完之后，决定右边默认显示谁
+        ShowDefaultCharacter(characterList);
+    }
+
+    // 打开面板时决定右边显示哪一个
+    private void ShowDefaultCharacter(List<CharacterData> characterList)
+    {
+        if (characterList.Count == 0) return;
+
+        CharacterData target = null;
+
+        // 1. 上次选过的那个还在，就继续显示它
+        if (GameData.SelectedCharacterId != 0)
+        {
+            for (int i = 0; i < characterList.Count; i++)
+            {
+                if (characterList[i].CharacterId == GameData.SelectedCharacterId)
+                {
+                    target = characterList[i];
+                    break;
+                }
+            }
+        }
+
+        // 2. 没选过 / 选的那个已经被删了 → 用列表第一个（按 id 升序就是 id=1）
+        if (target == null) target = characterList[0];
+
+        SelectCharacter(target);
+
+        int pageIndex = characterList.IndexOf(target) / 20;
+        JumpToPage(pageIndex);
+    }
+
+    private void JumpToPage(int pageIndex)
+    {
+        int total = svCharacters.content.childCount;
+        if (total <= 1) return;
+
+        currentPageIndex = Mathf.Clamp(pageIndex, 0, total - 1);
+        // 首次打开直接用瞬移，不要动画
+        svCharacters.horizontalNormalizedPosition = (float)currentPageIndex / (total - 1);
+    }
+    // ===== 翻页 =====
     private void OnClickNextPage()
     {
         int total = svCharacters.content.childCount;
@@ -93,10 +175,10 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
         int total = svCharacters.content.childCount;
         if (total <= 1) return;
 
-        currentPageIndex = targetPageIndex;
-        float targetPos = (float)targetPageIndex / (total - 1);
+        currentPageIndex = Mathf.Clamp(targetPageIndex, 0, total - 1);
+        float targetPos = (float)currentPageIndex / (total - 1);
 
-        snapTween?.Kill(); // 杀掉旧动画
+        if (snapTween != null) snapTween.Kill();
 
         snapTween = DOTween.To(
             () => svCharacters.horizontalNormalizedPosition,
@@ -106,88 +188,30 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
         ).SetEase(snapEase);
     }
 
-    private void Tip(string text)
-    {
-        UIManager.Instance.ShowPanel<TipPanel>().Show(text);
-    }
-
-    //更新右侧数据的方法
-    public void UpdatePanel(Sprite charactersprite, string characterName, string skill1, string skill2, string skill3)
-    {
-        igCharacter.sprite = charactersprite;
-        textCharacterName.text = characterName;
-        strSkill1 = skill1;
-        strSkill2 = skill2;
-        strSkill3 = skill3;
-    }
-
-    IEnumerator LoadCharacterCoroutine(List<CharacterData> characterList)
-    {
-        Transform contentTransform = svCharacters.content.transform;
-        foreach (Transform child in contentTransform)
-        {
-            Destroy(child.gameObject);
-        }
-        yield return null;
-        int totalPages = (characterList.Count + 19) / 20;
-        List<GameObject> list = new List<GameObject>(totalPages);
-        for (int i = 0; i < totalPages; i++)
-        {
-            GameObject page = GameObject.Instantiate(Resources.Load<GameObject>("UI/Page"));
-            page.transform.SetParent(svCharacters.content.transform, false);
-            list.Add(page);
-            for (int j = 0; j < 20; j++)
-            {
-                int currentButton = i * 20 + j;
-                if ((currentButton) >= characterList.Count)
-                {
-                    break;
-                }
-                GameObject btnObj = Instantiate(Resources.Load<GameObject>("UI/CharacterButton"));
-                btnObj.transform.SetParent(list[i].transform, false);
-
-                CharacterButton btnCharacter = btnObj.GetComponent<CharacterButton>();
-                btnCharacter.InitInfo(characterList[currentButton]);
-            }
-            Canvas.ForceUpdateCanvases();
-            yield return null;
-        }
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
+    // 松手后吸附到最近一页（由 ScrollDragRelay 调）
+    private void SnapToNearestPage()
     {
         if (svCharacters.content.childCount <= 1) return;
 
-        // 1. 获取当前滚动到的位置
         float currentPos = svCharacters.horizontalNormalizedPosition;
+        int nearestPage = Mathf.RoundToInt(currentPos * (svCharacters.content.childCount - 1));
 
-        // 2. 算最接近的页码
-        float pageIndexFloat = currentPos * (svCharacters.content.childCount - 1);
-        int nearestPage = Mathf.RoundToInt(pageIndexFloat);
-        currentPageIndex = nearestPage;
-        // 3. 速度判定（如果快速滑动，多翻一页）
         float velocity = svCharacters.velocity.x;
         if (Mathf.Abs(velocity) > 800f)
         {
-            // 注意：ScrollRect 的 velocity 方向与内容的移动方向相反
             nearestPage += velocity > 0 ? -1 : 1;
         }
 
-        // 4. 限制不能超出范围
         nearestPage = Mathf.Clamp(nearestPage, 0, svCharacters.content.childCount - 1);
-
-        // 5. 执行吸附动画
         ScrollToPage(nearestPage);
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+    private void Tip(string text)
     {
-        // 打断正在进行的翻页动画
-        snapTween?.Kill();
+        UIManager.Instance.ShowPanel<TipPanel>().Show(text);
     }
 }
 
 
 
-    
 

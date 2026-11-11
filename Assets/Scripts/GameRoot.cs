@@ -23,6 +23,7 @@ public class GameRoot : MonoBehaviour
         {
             Debug.Log("设置已保存：" + (res.code == Code.Ok ? "成功" : "失败"));
         });
+        UIManager.Instance.ShowPanel<LoginPanel>();
     }
 
     private void OnKicked(KickNotify msg)
