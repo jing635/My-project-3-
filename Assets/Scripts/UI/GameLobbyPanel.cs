@@ -27,7 +27,7 @@ public class GameLobbyPanel : BasePanel
     {
         AudioManager.Instance.PlayMusic("click");
         UIManager.Instance.HidePanel<GameLobbyPanel>();
-        //UIManager.Instance.ShowPanel<CharacterPanel>();
+        UIManager.Instance.ShowPanel<CharacterPanel>();
     }
 
     

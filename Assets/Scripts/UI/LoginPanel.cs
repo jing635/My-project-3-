@@ -29,7 +29,7 @@ public class LoginPanel : BasePanel
         if (!NetMgr.Instance.IsConnected) { Tip("还没连上服务器"); return; }
 
         btnLogin.interactable = false;      // 等结果期间不能重复点
-        Tip("正在登录...");
+        
 
         // 只负责发，不在这里判断对错
         NetMgr.Instance.Send(new LoginReq { username = user, password = pwd });
@@ -47,6 +47,9 @@ public class LoginPanel : BasePanel
 
             GameData.ApplySetting(res.isPlayMusic, res.isPlaySound, res.music, res.sound, res.characterdatas);
             ApplyAudio();
+
+            TipPanel panel = Tip("正在登录....");
+            Destroy(panel, 3f);
 
             AudioManager.Instance.StopMusic("bk1");
             AudioManager.Instance.PlayMusic("bk2");
@@ -71,9 +74,10 @@ public class LoginPanel : BasePanel
         UIManager.Instance.HidePanel<LoginPanel>();
         UIManager.Instance.ShowPanel<RegisterPanel>();
     }
-
-    private void Tip(string info)
+    private TipPanel Tip(string text)
     {
-        UIManager.Instance.ShowPanel<TipPanel>().Show(info);
+        TipPanel panel = UIManager.Instance.ShowPanel<TipPanel>();
+        panel.Show(text);
+        return panel;
     }
 }

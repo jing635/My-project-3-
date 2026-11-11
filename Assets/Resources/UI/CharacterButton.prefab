@@ -268,5 +268,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7030425299d404b9114ebebb0501b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  btnSelf: {fileID: 3838014030424038297}
+  selfButton: {fileID: 3838014030424038297}
   characterName: {fileID: 8139322523183546019}

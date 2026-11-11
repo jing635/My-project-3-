@@ -30,6 +30,7 @@ public static class GameData
     {
         UserId = 0;
         UserName = "";
+        CharacterDatas.Clear();
     }
 
 }

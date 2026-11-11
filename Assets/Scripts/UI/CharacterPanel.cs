@@ -16,11 +16,11 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
     public Image igCharacter;
     public TextMeshProUGUI textCharacterName;
     public Button btnSkill1;
-    public TextMeshProUGUI textskill1;
+    private string strSkill1;
     public Button btnSkill2;
-    public TextMeshProUGUI textskill2;
+    private string strSkill2;
     public Button btnSkill3;
-    public TextMeshProUGUI textskill3;
+    private string strSkill3;
     private int currentPageIndex = 0;
     public float snapDuration = 0.3f;
     public Ease snapEase = Ease.OutCubic;
@@ -57,30 +57,22 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
         btnSkill1.onClick.AddListener(() =>
         {
             //显示一技能介绍
-            Tip(textskill1.text);
+            Tip(strSkill1);
         });
 
         btnSkill2.onClick.AddListener(() =>
         {
             //显示二技能介绍
-            Tip(textskill2.text);
+            Tip(strSkill2);
         });
 
         btnSkill3.onClick.AddListener(() =>
         {
             //显示三技能介绍
-            Tip(textskill3.text);
+            Tip(strSkill3);
         });
     }
 
-    private void Update()
-    {
-        //更新当前页数
-        if (svCharacters.content.childCount <= 1) return;
-        float currentPos = svCharacters.horizontalNormalizedPosition;
-        currentPageIndex = Mathf.RoundToInt(currentPos * (svCharacters.content.childCount - 1));
-
-    }
 
 
     private void OnClickNextPage()
@@ -120,13 +112,13 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
     }
 
     //更新右侧数据的方法
-    public void UpdataPanel(Sprite charactersprite, string characterName, string skill1, string skill2, string skill3)
+    public void UpdatePanel(Sprite charactersprite, string characterName, string skill1, string skill2, string skill3)
     {
         igCharacter.sprite = charactersprite;
         textCharacterName.text = characterName;
-        textskill1.text = skill1;
-        textskill2.text = skill2;
-        textskill3.text = skill3;
+        strSkill1 = skill1;
+        strSkill2 = skill2;
+        strSkill3 = skill3;
     }
 
     IEnumerator LoadCharacterCoroutine(List<CharacterData> characterList)
@@ -141,19 +133,20 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
         List<GameObject> list = new List<GameObject>(totalPages);
         for (int i = 0; i < totalPages; i++)
         {
-            list[i] = GameObject.Instantiate(Resources.Load<GameObject>("UI/Page"));
-            list[i].transform.SetParent(svCharacters.content.transform, false);
+            GameObject page = GameObject.Instantiate(Resources.Load<GameObject>("UI/Page"));
+            page.transform.SetParent(svCharacters.content.transform, false);
+            list.Add(page);
             for (int j = 0; j < 20; j++)
             {
                 int currentButton = i * 20 + j;
-                if ((currentButton) == characterList.Count)
+                if ((currentButton) >= characterList.Count)
                 {
                     break;
                 }
                 GameObject btnObj = Instantiate(Resources.Load<GameObject>("UI/CharacterButton"));
                 btnObj.transform.SetParent(list[i].transform, false);
 
-                btncharacter btnCharacter = btnObj.GetComponent<btncharacter>();
+                CharacterButton btnCharacter = btnObj.GetComponent<CharacterButton>();
                 btnCharacter.InitInfo(characterList[currentButton]);
             }
             Canvas.ForceUpdateCanvases();
@@ -171,7 +164,7 @@ public class CharacterPanel : BasePanel, IEndDragHandler, IBeginDragHandler
         // 2. 算最接近的页码
         float pageIndexFloat = currentPos * (svCharacters.content.childCount - 1);
         int nearestPage = Mathf.RoundToInt(pageIndexFloat);
-
+        currentPageIndex = nearestPage;
         // 3. 速度判定（如果快速滑动，多翻一页）
         float velocity = svCharacters.velocity.x;
         if (Mathf.Abs(velocity) > 800f)
