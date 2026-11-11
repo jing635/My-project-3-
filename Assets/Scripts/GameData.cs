@@ -36,12 +36,3 @@ public static class GameData
     }
 
 }
-public class CharacterData
-{
-    public int CharacterId;
-    public string CharacterName = "";
-    public string CharacterImage = "";
-    public string Skill1 = "";
-    public string Skill2 = "";
-    public string Skill3 = "";
-}
