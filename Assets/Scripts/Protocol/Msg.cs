@@ -23,9 +23,10 @@ public static class MsgId
 }
 public static class MatchCode
 {
-    public const int Queued = 0;       // 已进入队列
-    public const int Cancelled = 1;    // 已取消
-    public const int Fail = 2;         // 失败
+    public const int Queued = 0;       // 正在匹配
+    public const int Succeed = 1;      //匹配成功
+    public const int Cancelled = 2;    // 已取消
+    public const int Fail = 3;         // 失败
 }
 
 // ============ 结果码 ============
@@ -78,7 +79,7 @@ public class LoginRes : BaseMsg
     public bool isPlaySound;
     public float music;
     public float sound;
-    public List<CharacterData> characterdatas = new List<CharacterData>();
+    public List<User_CharacterData> user_CharacterData = new List<User_CharacterData>();
 
     public override int Id() { return MsgId.LoginRes; }
 
@@ -92,7 +93,7 @@ public class LoginRes : BaseMsg
         w.WriteInt(isPlaySound ? 1 : 0);
         w.WriteFloat(music);
         w.WriteFloat(sound);
-        w.WriteCharacters(characterdatas);
+        w.WriteCharacters(user_CharacterData);
         return w.ToArray();
     }
 
@@ -106,7 +107,7 @@ public class LoginRes : BaseMsg
         isPlaySound = r.ReadInt() == 1;
         music = r.ReadFloat();
         sound = r.ReadFloat();
-        characterdatas = r.ReadCharacters();
+        user_CharacterData = r.ReadUser_Characters();
     }
 }
 
@@ -233,28 +234,38 @@ public class CharacterData
     public int CharacterId;
     public string CharacterName = "";
     public string CharacterImage = "";
+    public int CharacterLevel = 0;
+    public int CharacterShards = 0;
+    public int CharacterShardsCount;
     public string Skill1 = "";
     public string Skill2 = "";
     public string Skill3 = "";
 }
 
+public class User_CharacterData
+{
+    public string CharacterName = "";
+    public int CharacterLevel = 0;
+    public int CharacterShards = 0;
+}
+
 // ============ 匹配 ============
 public class MatchReq : BaseMsg
 {
-    public int characterId;
+    public int UserId;
 
     public override int Id() { return MsgId.MatchReq; }
 
     public override byte[] Write()
     {
         ByteWriter w = new ByteWriter();
-        w.WriteInt(characterId);
+        w.WriteInt(UserId);
         return w.ToArray();
     }
 
     public override void Read(byte[] body)
     {
-        characterId = new ByteReader(body).ReadInt();
+        UserId = new ByteReader(body).ReadInt();
     }
 }
 
@@ -262,6 +273,10 @@ public class MatchRes : BaseMsg
 {
     public int code;
     public string message = "";
+    public string ip = "";
+    public int port;
+    public int roomId;
+    public string enemyName = "";
 
     public override int Id() { return MsgId.MatchRes; }
 
@@ -270,6 +285,10 @@ public class MatchRes : BaseMsg
         ByteWriter w = new ByteWriter();
         w.WriteInt(code);
         w.WriteString(message);
+        w.WriteString(ip);
+        w.WriteInt(port);
+        w.WriteInt(roomId);
+        w.WriteString(enemyName);
         return w.ToArray();
     }
 
@@ -278,6 +297,10 @@ public class MatchRes : BaseMsg
         ByteReader r = new ByteReader(body);
         code = r.ReadInt();
         message = r.ReadString();
+        ip = r.ReadString();
+        port = r.ReadInt();
+        roomId = r.ReadInt();
+        enemyName = r.ReadString();
     }
 }
 
@@ -288,40 +311,6 @@ public class MatchCancelReq : BaseMsg
     public override void Read(byte[] body) { }
 }
 
-public class MatchSuccessNotify : BaseMsg
-{
-    public string ip = "";
-    public int port;
-    public int roomId;
-    public int myCharacterId;
-    public int enemyCharacterId;
-    public string enemyName = "";
-
-    public override int Id() { return MsgId.MatchSuccessNotify; }
-
-    public override byte[] Write()
-    {
-        ByteWriter w = new ByteWriter();
-        w.WriteString(ip);
-        w.WriteInt(port);
-        w.WriteInt(roomId);
-        w.WriteInt(myCharacterId);
-        w.WriteInt(enemyCharacterId);
-        w.WriteString(enemyName);
-        return w.ToArray();
-    }
-
-    public override void Read(byte[] body)
-    {
-        ByteReader r = new ByteReader(body);
-        ip = r.ReadString();
-        port = r.ReadInt();
-        roomId = r.ReadInt();
-        myCharacterId = r.ReadInt();
-        enemyCharacterId = r.ReadInt();
-        enemyName = r.ReadString();
-    }
-}
 
 // ============ 战斗服 ============
 public class JoinBattleReq : BaseMsg

@@ -24,23 +24,20 @@ public class ByteWriter
         WriteInt(b.Length);         
         list.AddRange(b);
     }
-    public void WriteCharacters(List<CharacterData> characters)
+    public void WriteUser_Characters(List<User_CharacterData> user_characters)
     {
-        WriteInt(characters.Count);
-        for (int i = 0; i < characters.Count; i++)
+        WriteInt(user_characters.Count);
+        for (int i = 0; i < user_characters.Count; i++)
         {
-            WriteCharacter(characters[i]);
+            WriteUser_Character(user_characters[i]);
         }
     }
 
-    private void WriteCharacter(CharacterData data)
+    private void WriteUser_Character(User_CharacterData data)
     {
-        WriteInt(data.CharacterId);
         WriteString(data.CharacterName);
-        WriteString(data.CharacterImage);
-        WriteString(data.Skill1);
-        WriteString(data.Skill2);
-        WriteString(data.Skill3);
+        WriteInt(data.CharacterLevel);
+        WriteInt(data.CharacterShards);
     }
 
 
@@ -85,26 +82,24 @@ public class ByteReader
         return s;
     }
 
-    public List<CharacterData> ReadCharacters()
+    public List<User_CharacterData> ReadUser_Characters()
     {
         int count = ReadInt();
-        List<CharacterData> characterdatas = new List<CharacterData>();
+        List<User_CharacterData> user_characterdatas = new List<User_CharacterData>();
         for (int i = 0; i < count; i++)
         {
-            characterdatas.Add(ReadCharacter());
+            user_characterdatas.Add(ReadUser_Character());
         }
-        return characterdatas;
+        return user_characterdatas;
 
     }
-    private CharacterData ReadCharacter()
+    private User_CharacterData ReadUser_Character()
     {
-        CharacterData data = new CharacterData();
-        data.CharacterId = ReadInt();
+        User_CharacterData data = new User_CharacterData();
+        
         data.CharacterName = ReadString();
-        data.CharacterImage = ReadString();
-        data.Skill1 = ReadString();
-        data.Skill2 = ReadString();
-        data.Skill3 = ReadString();
+        data.CharacterLevel = ReadInt();
+        data.CharacterShards = ReadInt();
         return data;
     }
 }

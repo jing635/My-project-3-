@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class CharacterPanel : BasePanel
 {
@@ -16,6 +17,9 @@ public class CharacterPanel : BasePanel
     public Button btnSkill1;
     public Button btnSkill2;
     public Button btnSkill3;
+    public Slider sdShards;
+    public TextMeshProUGUI textShards;
+    public TextMeshProUGUI textlev;
 
     // 三个技能文本，点角色时刷新
     private string strSkill1 = "请先选择一个角色";
@@ -32,7 +36,7 @@ public class CharacterPanel : BasePanel
 
     public override void Init()
     {
-        StartCoroutine(LoadCharacterCoroutine(GameData.CharacterDatas));
+        StartCoroutine(LoadCharacterCoroutine(GameData.characterDatas.characterdatas));
 
         svCharacters.inertia = false;
 
@@ -66,14 +70,18 @@ public class CharacterPanel : BasePanel
         GameData.SelectedCharacterId = data.CharacterId; // 记到全局，下次进来用
 
         Sprite icon = Resources.Load<Sprite>("CharacterSprite/" + data.CharacterImage);
-        UpdatePanel(icon, data.CharacterName, data.Skill1, data.Skill2, data.Skill3);
+        UpdatePanel(icon, data.CharacterName, data.CharacterLevel, data.CharacterShards, data.CharacterShardsCount, data.Skill1, data.Skill2, data.Skill3);
     }
 
     // 刷新右侧显示
-    private void UpdatePanel(Sprite characterSprite, string characterName, string skill1, string skill2, string skill3)
+    private void UpdatePanel(Sprite characterSprite, string characterName, int characterLevel, int characterShards, int characterShardsCount, string skill1, string skill2, string skill3)
     {
         igCharacter.sprite = characterSprite;
         textCharacterName.text = characterName;
+        textlev.text = "lev: " + characterLevel;
+        textShards.text = characterShards + "/" + characterShardsCount;
+        sdShards.maxValue = characterShardsCount;
+        sdShards.value = characterShards;
         strSkill1 = skill1;
         strSkill2 = skill2;
         strSkill3 = skill3;
@@ -83,8 +91,11 @@ public class CharacterPanel : BasePanel
     IEnumerator LoadCharacterCoroutine(List<CharacterData> characterList)
     {
         Transform contentTransform = svCharacters.content.transform;
+        GameObject buttonPrefab = Resources.Load<GameObject>("UI/CharacterButton");
+        GameObject pagePrefab = Resources.Load<GameObject>("UI/Page");
 
-        // 清掉上一次留下的格子（Destroy 是延迟到帧末生效，所以下面要等一下）
+        var CharacterListSorted = ShowUser_CharactersFirst(GameData.user_CharacterDatas, characterList);
+        // 清掉上一次留下的格子
         foreach (Transform child in contentTransform)
         {
             Destroy(child.gameObject);
@@ -95,7 +106,7 @@ public class CharacterPanel : BasePanel
 
         for (int i = 0; i < totalPages; i++)
         {
-            GameObject page = Instantiate(Resources.Load<GameObject>("UI/Page"));
+            GameObject page = Instantiate(pagePrefab);
             page.transform.SetParent(contentTransform, false);
 
             for (int j = 0; j < 20; j++)
@@ -103,11 +114,18 @@ public class CharacterPanel : BasePanel
                 int index = i * 20 + j;
                 if (index >= characterList.Count) break;
 
-                GameObject btnObj = Instantiate(Resources.Load<GameObject>("UI/CharacterButton"));
+                GameObject btnObj = Instantiate(buttonPrefab);
                 btnObj.transform.SetParent(page.transform, false);
 
                 CharacterButton btn = btnObj.GetComponent<CharacterButton>();
-                if (btn != null) btn.InitInfo(characterList[index]);
+                if (btn != null) btn.InitInfo(CharacterListSorted[index]);
+
+                bool isOwned = GameData.user_CharacterDatas.Any(uc => uc.CharacterName == CharacterListSorted[index].CharacterName);
+                Image img = btnObj.GetComponent<Image>();
+                if (img != null)
+                {
+                    img.color = isOwned ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1f);
+                }
             }
 
             Canvas.ForceUpdateCanvases();
@@ -116,6 +134,15 @@ public class CharacterPanel : BasePanel
 
         // 所有格子建完之后，决定右边默认显示谁
         ShowDefaultCharacter(characterList);
+    }
+
+    //把自己拥有的角色显示在前面
+    private List<CharacterData> ShowUser_CharactersFirst(List<User_CharacterData> user_Characters, List<CharacterData> characterList)
+    {
+        return characterList 
+            .OrderByDescending(c => user_Characters.Any(uc => uc.CharacterName == c.CharacterName))
+            .ThenBy(c => c.CharacterId)
+            .ToList();
     }
 
     // 打开面板时决定右边显示哪一个

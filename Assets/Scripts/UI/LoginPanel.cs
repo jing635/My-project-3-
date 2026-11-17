@@ -45,7 +45,7 @@ public class LoginPanel : BasePanel
             GameData.UserId = res.userId;
             GameData.UserName = UserName.text.Trim();
 
-            GameData.ApplySetting(res.isPlayMusic, res.isPlaySound, res.music, res.sound, res.characterdatas);
+            GameData.ApplySetting(res.isPlayMusic, res.isPlaySound, res.music, res.sound, res.user_CharacterData);
             ApplyAudio();
             UIManager.Instance.HidePanel<TipPanel>();
 
