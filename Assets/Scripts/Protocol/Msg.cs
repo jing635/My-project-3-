@@ -93,7 +93,7 @@ public class LoginRes : BaseMsg
         w.WriteInt(isPlaySound ? 1 : 0);
         w.WriteFloat(music);
         w.WriteFloat(sound);
-        w.WriteCharacters(user_CharacterData);
+        w.WriteUser_Characters(user_CharacterData);
         return w.ToArray();
     }
 
@@ -252,20 +252,17 @@ public class User_CharacterData
 // ============ 匹配 ============
 public class MatchReq : BaseMsg
 {
-    public int UserId;
-
     public override int Id() { return MsgId.MatchReq; }
 
     public override byte[] Write()
     {
         ByteWriter w = new ByteWriter();
-        w.WriteInt(UserId);
         return w.ToArray();
     }
 
     public override void Read(byte[] body)
     {
-        UserId = new ByteReader(body).ReadInt();
+       
     }
 }
 

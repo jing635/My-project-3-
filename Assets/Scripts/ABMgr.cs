@@ -76,7 +76,7 @@ public class ABMgr
         //加载资源
         Object obj = abDic[abName].LoadAsset(resName);
         if(obj is GameObject)
-            return Instantiate(obj);
+            return UnityEngine.Object.Instantiate(obj);
         else
             return obj;
     }
@@ -88,7 +88,7 @@ public class ABMgr
         //加载资源
         Object obj = abDic[abName].LoadAsset(resName,type);
         if(obj is GameObject)
-            return Instantiate(obj);
+            return UnityEngine.Object.Instantiate(obj);
         else
             return obj;
     }
@@ -99,7 +99,7 @@ public class ABMgr
         //加载资源
         T obj = abDic[abName].LoadAsset<T>(resName);
         if(obj is GameObject)
-            return Instantiate(obj);
+            return UnityEngine.Object.Instantiate(obj);
         else
             return obj;
     }

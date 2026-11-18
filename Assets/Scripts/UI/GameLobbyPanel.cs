@@ -25,7 +25,7 @@ public class GameLobbyPanel : BasePanel
         {
             AudioManager.Instance.PlayMusic("click");
             //向服务器发起联机
-            NetMgr.Instance.Send(new MatchReq { UserId = GameData.UserId });
+            NetMgr.Instance.Send(new MatchReq());
 
         });
         btnDuelArenaAi.onClick.AddListener(() =>

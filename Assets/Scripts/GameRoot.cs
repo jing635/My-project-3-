@@ -7,6 +7,8 @@ public class GameRoot : MonoBehaviour
 
     private void Start()
     {
+        GameData.Init();
+        
         if (NetMgr.Instance == null)
         {
             Debug.LogError("场景里没有 NetMgr，检查 GameRoot 物体上挂的组件");

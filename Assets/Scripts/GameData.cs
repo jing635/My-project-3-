@@ -14,12 +14,20 @@ public static class GameData
     public static List<User_CharacterData> user_CharacterDatas = new List<User_CharacterData>();
     public static CharacterDatas characterDatas = new CharacterDatas();
     public static int SelectedCharacterId = 0;
+    private static bool inited;
 
     
     
-    static void Awake()
+    public static void Init()
     {
-        characterDatas = JsonUtility.FromJson<CharacterDatas>(ABMgr.Instance().LoadRes<TextAsset>("json","CharacterDatas").text);
+        if (inited) return;
+        inited = true;
+
+        TextAsset json = ABMgr.Instance().LoadRes<TextAsset>("json", "CharacterDatas");
+        if (json != null)
+            characterDatas = JsonUtility.FromJson<CharacterDatas>(json.text);
+        else
+            Debug.LogError("CharacterDatas.json 没读到");
     }
     public static void ApplySetting(bool playMusic, bool playSound, float music, float sound, List<User_CharacterData> datas)
     {
