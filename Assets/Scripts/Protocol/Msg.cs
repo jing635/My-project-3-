@@ -229,6 +229,7 @@ public class SaveSettingRes : BaseMsg
 }
 
 // ============ 角色数据（协议层，客户端和服务端共用） ============
+[System.Serializable]
 public class CharacterData
 {
     public int CharacterId;

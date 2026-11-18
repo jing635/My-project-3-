@@ -69,8 +69,14 @@ public class CharacterPanel : BasePanel
         currentCharacter = data;                        // 本次打开期间用
         GameData.SelectedCharacterId = data.CharacterId; // 记到全局，下次进来用
 
-        Sprite icon = Resources.Load<Sprite>("CharacterSprite/" + data.CharacterImage);
-        UpdatePanel(icon, data.CharacterName, data.CharacterLevel, data.CharacterShards, data.CharacterShardsCount, data.Skill1, data.Skill2, data.Skill3);
+
+        User_CharacterData owned = GameData.user_CharacterDatas.Find(u => u.CharacterName == data.CharacterName);
+        Sprite icon = ABMgr.Instance().LoadRes<Sprite>("ui", data.CharacterImage);
+
+        int level  = owned != null ? owned.CharacterLevel  : 0;
+        int shards = owned != null ? owned.CharacterShards : 0;
+
+        UpdatePanel(icon, data.CharacterName, level, shards, data.CharacterShardsCount, data.Skill1, data.Skill2, data.Skill3);
     }
 
     // 刷新右侧显示
