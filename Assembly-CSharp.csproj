@@ -122,11 +122,13 @@
     <Compile Include="Assets\Scripts\NetConnection.cs" />
     <Compile Include="Assets\XLua\Gen\UnityEngine_TextAssetWrap.cs" />
     <Compile Include="Assets\XLua\Gen\UnityEngine_QuaternionWrap.cs" />
+    <Compile Include="Assets\Scripts\UI\ChooseCharacterButton.cs" />
     <Compile Include="Assets\XLua\Gen\UnityEngine_RendererWrap.cs" />
     <Compile Include="Assets\XLua\Src\MethodWarpsCache.cs" />
     <Compile Include="Assets\XLua\Src\ObjectPool.cs" />
     <Compile Include="Assets\XLua\Gen\System_Collections_Generic_List_1_System_Int32_Wrap.cs" />
     <Compile Include="Assets\Scripts\GameRoot.cs" />
+    <Compile Include="Assets\Scripts\UI\LoadingPanel.cs" />
     <Compile Include="Assets\XLua\Gen\XLuaTest_Foo2ChildWrap.cs" />
     <Compile Include="Assets\Scripts\UI\SettingPanel.cs" />
     <Compile Include="Assets\XLua\Src\RawObject.cs" />
@@ -138,6 +140,7 @@
     <Compile Include="Assets\XLua\Tutorial\LoadLuaScript\ByFile\ByFile.cs" />
     <Compile Include="Assets\XLua\Src\GenericDelegateBridge.cs" />
     <Compile Include="Assets\XLua\Gen\UnityEngine_LightWrap.cs" />
+    <Compile Include="Assets\Scripts\PageTool.cs" />
     <Compile Include="Assets\XLua\Examples\01_Helloworld\Helloworld.cs" />
     <Compile Include="Assets\XLua\Src\LuaFunction.cs" />
     <Compile Include="Assets\XLua\Gen\Tutorial_BaseClassWrap.cs" />
@@ -179,6 +182,7 @@
     <Compile Include="Assets\XLua\Tutorial\LoadLuaScript\ByString\ByString.cs" />
     <Compile Include="Assets\XLua\Gen\XLuaGenAutoRegister.cs" />
     <Compile Include="Assets\XLua\Src\CodeEmit.cs" />
+    <Compile Include="Assets\Scripts\UI\ChooseCharacterPanel.cs" />
     <Compile Include="Assets\XLua\Tutorial\LuaCallCSharp\LuaCallCs.cs" />
     <Compile Include="Assets\XLua\Src\ObjectTranslatorPool.cs" />
     <Compile Include="Assets\Scripts\UI\ScrollDragRelay.cs" />

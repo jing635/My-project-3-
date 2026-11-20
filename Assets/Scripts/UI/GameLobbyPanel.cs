@@ -66,6 +66,10 @@ public class GameLobbyPanel : BasePanel
             StopCoroutine(TickCorotine);
             panel.btnCancel.interactable = false;
 
+            NetMgr.Instance.Battle.Connect(res.ip, res.port);
+            UIManager.Instance.HidePanel<MatchPanel>();
+            UIManager.Instance.ShowPanel<ChooseCharacterPanel>();
+
         }
         
     }

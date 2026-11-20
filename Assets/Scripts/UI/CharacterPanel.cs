@@ -44,10 +44,17 @@ public class CharacterPanel : BasePanel
         ScrollDragRelay relay = svCharacters.gameObject.GetComponent<ScrollDragRelay>();
         if (relay == null) relay = svCharacters.gameObject.AddComponent<ScrollDragRelay>();
         relay.OnDragBegin = () => { if (snapTween != null) snapTween.Kill(); };
-        relay.OnDragEnd = SnapToNearestPage;
+        relay.OnDragEnd =() => PageTool.SnapToNearestPage(svCharacters,currentPageIndex);
 
-        btnLeft.onClick.AddListener(OnClickPrevPage);
-        btnRight.onClick.AddListener(OnClickNextPage);
+        btnLeft.onClick.AddListener(()=>
+        {
+            PageTool.OnClickPrevPage(svCharacters,currentPageIndex);
+        });
+
+        btnRight.onClick.AddListener(()=>
+        {
+            PageTool.OnClickNextPage(svCharacters,currentPageIndex);
+        });
 
         btnCancel.onClick.AddListener(() =>
         {
@@ -71,7 +78,7 @@ public class CharacterPanel : BasePanel
 
 
         User_CharacterData owned = GameData.user_CharacterDatas.Find(u => u.CharacterName == data.CharacterName);
-        Sprite icon = ABMgr.Instance().LoadRes<Sprite>("ui", data.CharacterImage);
+        Sprite icon = ABMgr.Instance().LoadRes<Sprite>("character", data.CharacterImage);
 
         int level  = owned != null ? owned.CharacterLevel  : 0;
         int shards = owned != null ? owned.CharacterShards : 0;
@@ -98,7 +105,7 @@ public class CharacterPanel : BasePanel
     {
         Transform contentTransform = svCharacters.content.transform;
         GameObject buttonPrefab = Resources.Load<GameObject>("UI/CharacterButton");
-        GameObject pagePrefab = Resources.Load<GameObject>("UI/Page");
+        GameObject pagePrefab = Resources.Load<GameObject>("UI/CharacterPage");
 
         var CharacterListSorted = ShowUser_CharactersFirst(GameData.user_CharacterDatas, characterList);
         // 清掉上一次留下的格子
@@ -177,68 +184,9 @@ public class CharacterPanel : BasePanel
         SelectCharacter(target);
 
         int pageIndex = characterList.IndexOf(target) / 20;
-        JumpToPage(pageIndex);
+        PageTool.JumpToPage(svCharacters,currentPageIndex,pageIndex);
     }
-
-    private void JumpToPage(int pageIndex)
-    {
-        int total = svCharacters.content.childCount;
-        if (total <= 1) return;
-
-        currentPageIndex = Mathf.Clamp(pageIndex, 0, total - 1);
-        // 首次打开直接用瞬移，不要动画
-        svCharacters.horizontalNormalizedPosition = (float)currentPageIndex / (total - 1);
-    }
-    // ===== 翻页 =====
-    private void OnClickNextPage()
-    {
-        int total = svCharacters.content.childCount;
-        if (total <= 1 || currentPageIndex >= total - 1) return;
-        ScrollToPage(currentPageIndex + 1);
-    }
-
-    private void OnClickPrevPage()
-    {
-        if (svCharacters.content.childCount <= 1 || currentPageIndex <= 0) return;
-        ScrollToPage(currentPageIndex - 1);
-    }
-
-    private void ScrollToPage(int targetPageIndex)
-    {
-        int total = svCharacters.content.childCount;
-        if (total <= 1) return;
-
-        currentPageIndex = Mathf.Clamp(targetPageIndex, 0, total - 1);
-        float targetPos = (float)currentPageIndex / (total - 1);
-
-        if (snapTween != null) snapTween.Kill();
-
-        snapTween = DOTween.To(
-            () => svCharacters.horizontalNormalizedPosition,
-            x => svCharacters.horizontalNormalizedPosition = x,
-            targetPos,
-            snapDuration
-        ).SetEase(snapEase);
-    }
-
-    // 松手后吸附到最近一页（由 ScrollDragRelay 调）
-    private void SnapToNearestPage()
-    {
-        if (svCharacters.content.childCount <= 1) return;
-
-        float currentPos = svCharacters.horizontalNormalizedPosition;
-        int nearestPage = Mathf.RoundToInt(currentPos * (svCharacters.content.childCount - 1));
-
-        float velocity = svCharacters.velocity.x;
-        if (Mathf.Abs(velocity) > 800f)
-        {
-            nearestPage += velocity > 0 ? -1 : 1;
-        }
-
-        nearestPage = Mathf.Clamp(nearestPage, 0, svCharacters.content.childCount - 1);
-        ScrollToPage(nearestPage);
-    }
-
+    
     private void Tip(string text)
     {
         UIManager.Instance.ShowPanel<TipPanel>().Show(text);

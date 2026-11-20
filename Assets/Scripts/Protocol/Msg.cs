@@ -14,11 +14,12 @@ public static class MsgId
     public const int MatchReq = 210;              // 客户端 → 大厅：开始匹配
     public const int MatchRes = 211;              // 大厅 → 客户端：匹配状态
     public const int MatchCancelReq = 212;        // 客户端 → 大厅：取消匹配
-    public const int MatchSuccessNotify = 213;    // 大厅 → 客户端：匹配成功，去战斗服
     public const int JoinBattleReq = 301;         // 客户端 → 战斗服：进房间
     public const int JoinBattleRes = 302;         // 战斗服 → 客户端：进房结果
     public const int BattleStartNotify = 303;     // 战斗服 → 客户端：开局
     public const int EnemyLeftNotify = 304;       // 战斗服 → 客户端：对手跑了
+    public const int ChooseCharacterReq = 305;    // 客户端 → 战斗服：选择角色
+    public const int ChooseCharacterRes = 306;    // 战斗服 → 客户端：选择角色结果
 
 }
 public static class MatchCode
@@ -311,6 +312,72 @@ public class MatchCancelReq : BaseMsg
 
 
 // ============ 战斗服 ============
+public class ChooseCharacterReq : BaseMsg
+{
+    public int userId;
+    public int roomId;
+    public string CharacterName1 = "";
+    public string CharacterName2 = "";
+
+    public override int Id() { return MsgId.ChooseCharacterReq; }
+
+    public override byte[] Write()
+    {
+        ByteWriter w = new ByteWriter();
+        w.WriteInt(userId);
+        w.WriteInt(roomId);
+        w.WriteString(CharacterName1);
+        w.WriteString(CharacterName2);
+        return w.ToArray();
+    }
+
+    public override void Read(byte[] body)
+    {
+        ByteReader r = new ByteReader(body);
+        userId = r.ReadInt();
+        roomId = r.ReadInt();
+        CharacterName1 = r.ReadString();
+        CharacterName2 = r.ReadString();
+    }
+}
+
+public class ChooseCharacterRes : BaseMsg
+{
+    public int roomId;
+    public int playerIndex;
+    public int randomSeed;
+    public string CharacterName1 = "";
+    public string CharacterName2 = "";
+    public string CharacterName3 = "";
+    public string CharacterName4 = "";
+
+    public override int Id() { return MsgId.ChooseCharacterRes; }
+
+    public override byte[] Write()
+    {
+        ByteWriter w = new ByteWriter();
+        w.WriteInt(roomId);
+        w.WriteInt(playerIndex);
+        w.WriteInt(randomSeed);
+        w.WriteString(CharacterName1);
+        w.WriteString(CharacterName2);
+        w.WriteString(CharacterName3);
+        w.WriteString(CharacterName4);
+        return w.ToArray();
+    }
+
+    public override void Read(byte[] body)
+    {
+        ByteReader r = new ByteReader(body);
+        roomId = r.ReadInt();
+        playerIndex = r.ReadInt();
+        randomSeed = r.ReadInt();
+        CharacterName1 = r.ReadString();
+        CharacterName2 = r.ReadString();
+        CharacterName3 = r.ReadString();
+        CharacterName4 = r.ReadString();
+    }
+}
 public class JoinBattleReq : BaseMsg
 {
     public int userId;
@@ -360,37 +427,6 @@ public class JoinBattleRes : BaseMsg
     }
 }
 
-public class BattleStartNotify : BaseMsg
-{
-    public int roomId;
-    public int playerIndex;        // 0 或 1，帧同步要用
-    public int myCharacterId;
-    public int enemyCharacterId;
-    public int randomSeed;         // 战斗随机种子，两边必须一样
-
-    public override int Id() { return MsgId.BattleStartNotify; }
-
-    public override byte[] Write()
-    {
-        ByteWriter w = new ByteWriter();
-        w.WriteInt(roomId);
-        w.WriteInt(playerIndex);
-        w.WriteInt(myCharacterId);
-        w.WriteInt(enemyCharacterId);
-        w.WriteInt(randomSeed);
-        return w.ToArray();
-    }
-
-    public override void Read(byte[] body)
-    {
-        ByteReader r = new ByteReader(body);
-        roomId = r.ReadInt();
-        playerIndex = r.ReadInt();
-        myCharacterId = r.ReadInt();
-        enemyCharacterId = r.ReadInt();
-        randomSeed = r.ReadInt();
-    }
-}
 
 public class EnemyLeftNotify : BaseMsg
 {

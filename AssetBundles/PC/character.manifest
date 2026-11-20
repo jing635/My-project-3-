@@ -1,0 +1,85 @@
+ManifestFileVersion: 0
+CRC: 2508271949
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 3c6deced532d201cc209486de83071a6
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 033fafe2c9f6c610c3a734393882fd4c
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 3c6deced532d201cc209486de83071a6
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 687078895
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/ArtRes/character/shouju_0 20.asset
+- Assets/ArtRes/character/shouju_0 26.asset
+- Assets/ArtRes/character/shouju_0 12.asset
+- Assets/ArtRes/character/shouju_0 36.asset
+- Assets/ArtRes/character/shouju.png
+- Assets/ArtRes/character/shouju_0 46.asset
+- Assets/ArtRes/character/shouju_0 17.asset
+- Assets/ArtRes/character/shouju_0 34.asset
+- Assets/ArtRes/character/shouju_0 44.asset
+- Assets/ArtRes/character/shouju_0 23.asset
+- Assets/ArtRes/character/shouju_0 28.asset
+- Assets/ArtRes/character/shouju_0 41.asset
+- Assets/ArtRes/character/shouju_0 33.asset
+- Assets/ArtRes/character/shouju_0 22.asset
+- Assets/ArtRes/character/shouju_0 24.asset
+- Assets/ArtRes/character/shouju_0 32.asset
+- Assets/ArtRes/character/shouju_0 7.asset
+- Assets/ArtRes/character/shouju_0 51.asset
+- Assets/ArtRes/character/shouju_0 6.asset
+- Assets/ArtRes/character/shouju_0 53.asset
+- Assets/ArtRes/character/shouju_0 55.asset
+- Assets/ArtRes/character/shouju_0 48.asset
+- Assets/ArtRes/character/shouju_0 30.asset
+- Assets/ArtRes/character/shouju_0 1.asset
+- Assets/ArtRes/character/shouju_0 21.asset
+- Assets/ArtRes/character/shouju_0 9.asset
+- Assets/ArtRes/character/shouju_0 2.asset
+- Assets/ArtRes/character/shouju_0 43.asset
+- Assets/ArtRes/character/shouju_0 37.asset
+- Assets/ArtRes/character/shouju_0 18.asset
+- Assets/ArtRes/character/shouju_0 57.asset
+- Assets/ArtRes/character/shouju_0 52.asset
+- Assets/ArtRes/character/shouju_0 42.asset
+- Assets/ArtRes/character/shouju_0 13.asset
+- Assets/ArtRes/character/shouju_0 31.asset
+- Assets/ArtRes/character/shouju_0 27.asset
+- Assets/ArtRes/character/shouju_0 38.asset
+- Assets/ArtRes/character/shouju_0 16.asset
+- Assets/ArtRes/character/shouju_0 47.asset
+- Assets/ArtRes/character/shouju_0 10.asset
+- Assets/ArtRes/character/shouju_0 39.asset
+- Assets/ArtRes/character/shouju_0 4.asset
+- Assets/ArtRes/character/shouju_0 49.asset
+- Assets/ArtRes/character/shouju_0 59.asset
+- Assets/ArtRes/character/shouju_0 11.asset
+- Assets/ArtRes/character/shouju_0 61.asset
+- Assets/ArtRes/character/shouju_0 45.asset
+- Assets/ArtRes/character/shouju_0 54.asset
+- Assets/ArtRes/character/shouju_0 50.asset
+- Assets/ArtRes/character/shouju_0 25.asset
+- Assets/ArtRes/character/shouju_0 40.asset
+- Assets/ArtRes/character/shouju_0 8.asset
+- Assets/ArtRes/character/shouju_0 56.asset
+- Assets/ArtRes/character/shouju_0 35.asset
+- Assets/ArtRes/character/shouju_0 5.asset
+- Assets/ArtRes/character/shouju_0 19.asset
+- Assets/ArtRes/character/shouju_0 3.asset
+- Assets/ArtRes/character/shouju_0 14.asset
+- Assets/ArtRes/character/shouju_0 60.asset
+- Assets/ArtRes/character/shouju_0 58.asset
+- Assets/ArtRes/character/shouju_0 29.asset
+- Assets/ArtRes/character/shouju_0 15.asset
+Dependencies: []

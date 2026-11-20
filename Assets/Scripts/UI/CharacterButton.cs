@@ -29,7 +29,7 @@ public class CharacterButton : MonoBehaviour
     {
         data = character;
         characterName.text = character.CharacterName;
-        selfButton.GetComponent<Image>().sprite =Resources.Load<Sprite>("CharacterSprite/" + character.CharacterImage);
+        selfButton.GetComponent<Image>().sprite = ABMgr.Instance().LoadRes<Sprite>("character", character.CharacterImage);
         selfButton.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1f);
     }
     
